@@ -1,0 +1,6 @@
+<launch>
+    <!-- Node for FLOAM odometry estimation -->
+    <node name="floam_odom_estimation_node" pkg="floam" type="floam_odom_estimation_node" output="screen">
+        <!-- You can add node-specific parameters here if needed -->
+    </node>
+</launch>

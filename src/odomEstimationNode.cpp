@@ -41,9 +41,13 @@ void velodyneSurfHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
 }
 void velodyneEdgeHandler(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg)
 {
+    std::cout << "c.1.1" << std::endl;
     mutex_lock.lock();
+    std::cout << "c.1.2" << std::endl;
     pointCloudEdgeBuf.push(laserCloudMsg);
+    std::cout << "c.1.3" << std::endl;
     mutex_lock.unlock();
+    std::cout << "c.1.4" << std::endl;
 }
 
 bool is_odom_inited = false;
@@ -134,31 +138,37 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "main");
     ros::NodeHandle nh;
 
-    int scan_line = 64;
+    int scan_line = 16;
     double vertical_angle = 2.0;
     double scan_period= 0.1;
     double max_dis = 60.0;
     double min_dis = 2.0;
     double map_resolution = 0.4;
-    nh.getParam("/scan_period", scan_period); 
-    nh.getParam("/vertical_angle", vertical_angle); 
-    nh.getParam("/max_dis", max_dis);
-    nh.getParam("/min_dis", min_dis);
-    nh.getParam("/scan_line", scan_line);
-    nh.getParam("/map_resolution", map_resolution);
+    // nh.getParam("/scan_period", scan_period); 
+    // nh.getParam("/vertical_angle", vertical_angle); 
+    // nh.getParam("/max_dis", max_dis);
+    // nh.getParam("/min_dis", min_dis);
+    // nh.getParam("/scan_line", scan_line);
+    // nh.getParam("/map_resolution", map_resolution);
+    std::cout << "a" << std::endl;
 
     lidar_param.setScanPeriod(scan_period);
     lidar_param.setVerticalAngle(vertical_angle);
     lidar_param.setLines(scan_line);
     lidar_param.setMaxDistance(max_dis);
     lidar_param.setMinDistance(min_dis);
+    std::cout << "b" << std::endl;
 
     odomEstimation.init(lidar_param, map_resolution);
+    std::cout << "c.1" << std::endl;
     ros::Subscriber subEdgeLaserCloud = nh.subscribe<sensor_msgs::PointCloud2>("/laser_cloud_edge", 100, velodyneEdgeHandler);
+    std::cout << "c.2" << std::endl;
     ros::Subscriber subSurfLaserCloud = nh.subscribe<sensor_msgs::PointCloud2>("/laser_cloud_surf", 100, velodyneSurfHandler);
+    std::cout << "c.3" << std::endl;
 
     pubLaserOdometry = nh.advertise<nav_msgs::Odometry>("/odom", 100);
     std::thread odom_estimation_process{odom_estimation};
+    std::cout << "d" << std::endl;
 
     ros::spin();
 
